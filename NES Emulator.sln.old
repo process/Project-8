@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NES EmulatorCON", "NES Emulator\NES Emulator.vcproj", "{703B9BD3-724E-4122-953A-204AB13B6182}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Project 8 OLD", "NESemuWIN\NESemuWIN.vcproj", "{67432F7D-C1F5-40D4-8007-3913F6E9904D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Project 8", "Project 8\Project 8.vcproj", "{79C11C51-5DE0-47A8-BAFC-C85E420B6409}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Config|Win32 = Config|Win32
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{703B9BD3-724E-4122-953A-204AB13B6182}.Config|Win32.ActiveCfg = Release|Win32
+		{703B9BD3-724E-4122-953A-204AB13B6182}.Config|Win32.Build.0 = Release|Win32
+		{703B9BD3-724E-4122-953A-204AB13B6182}.Debug|Win32.ActiveCfg = Debug|Win32
+		{703B9BD3-724E-4122-953A-204AB13B6182}.Debug|Win32.Build.0 = Debug|Win32
+		{703B9BD3-724E-4122-953A-204AB13B6182}.Release|Win32.ActiveCfg = Release|Win32
+		{703B9BD3-724E-4122-953A-204AB13B6182}.Release|Win32.Build.0 = Release|Win32
+		{67432F7D-C1F5-40D4-8007-3913F6E9904D}.Config|Win32.ActiveCfg = Config|Win32
+		{67432F7D-C1F5-40D4-8007-3913F6E9904D}.Config|Win32.Build.0 = Config|Win32
+		{67432F7D-C1F5-40D4-8007-3913F6E9904D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{67432F7D-C1F5-40D4-8007-3913F6E9904D}.Debug|Win32.Build.0 = Debug|Win32
+		{67432F7D-C1F5-40D4-8007-3913F6E9904D}.Release|Win32.ActiveCfg = Release|Win32
+		{67432F7D-C1F5-40D4-8007-3913F6E9904D}.Release|Win32.Build.0 = Release|Win32
+		{79C11C51-5DE0-47A8-BAFC-C85E420B6409}.Config|Win32.ActiveCfg = Release|Win32
+		{79C11C51-5DE0-47A8-BAFC-C85E420B6409}.Config|Win32.Build.0 = Release|Win32
+		{79C11C51-5DE0-47A8-BAFC-C85E420B6409}.Debug|Win32.ActiveCfg = Debug|Win32
+		{79C11C51-5DE0-47A8-BAFC-C85E420B6409}.Debug|Win32.Build.0 = Debug|Win32
+		{79C11C51-5DE0-47A8-BAFC-C85E420B6409}.Release|Win32.ActiveCfg = Release|Win32
+		{79C11C51-5DE0-47A8-BAFC-C85E420B6409}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

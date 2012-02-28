@@ -1,0 +1,205 @@
+TODO
+
+Figure out how to get CPU and PPU timed correctly (ohboyherewego.jpg)
+
+USE THIS PLEASE: http://nesdev.parodius.com/NES%20emulator%20development%20guide.txt
+
+Timing info:
+60 frames per second
+263 scanlines per frame
+20 scanlines in vblank
+243 scanlines for drawing
+15780 total scanlines per second
+1,789,772.5 cycles per second
+599 total cycles
+151 opcodes
+~4 cycles average
+447443.125 intructions per second
+113 cycles for each scanline
+every 10 ms 17897.725 cycles (17898)
+
+!!!3 pixels per cycle according to docs!!!
+341 pixels are rendered per scanline (although only 256 are displayed)
+
+__SMB__________________________
+0x808C - Set nametable to 0
+0x816C - set nametable to 1 
+0x8EED - Nametable set to 1 TOO EARLY
+0x8EAC - Sets nametable to 1 during vblank (SHOULDNT HAPPEN)
+_______________________________
+
+nametable should be set to 0 when frame starts, but this isnt happening for some gay ass reason
+
+Maybe sprite 0 hit is skipping frames (wait that wouldnt work because then the whole game would be broken)
+
+--------------------------------------------------------------------------
+25kb games (no mapper/1 PRG)
+===================================================
+Balloon Fight (Fully playable!)
+Baseball (Menu, infinite loop when start game)
+Bomberman (Menu, unresponsive)
+Burger Time (Nothing)
+Clu Clu Land (Fully playable, but color glitches on score screen)
+Defender II (Fully playable!)
+Donkey Kong (Fully playable!)
+Donkey Kong 3 (Fully playable!)
+Donkey Kong Jr. (Fully playable!)
+Donkey Kong Jr. Math (Fully playable!)
+Dunk Hunt (Responsive, but light gun not implemented)
+Excitebike (Playable, but with severe scrolling glitches)
+Golf (Glitched menu)
+Hogan's Alley (Responsive, but light gun not implemented)
+Ice Climbers (Fully playable!)
+Lode Runner (Fully playable!)
+Lunar Pool (Fully playable!)
+M.U.S.C.L.E. (Fully playable!)
+Mario Bros. (Fully playable!)
+Millipede (Fully playable!)
+Pac-Man (Fully playable!)
+Pinball (Fully playable!)
+Popeye (Fully playable!)
+Raid on Bungeling Bay (Scrolling glitches everywhere, only need vertical mirroring)
+Tennis (Fully playable!)
+Urban Champion (Fully playable!)
+Wild Gunman(Responsive, but light gun not implemented)
+
+41kb games (no mapper/2 PRG)
+===================================================
+
+--------------------------------------------------------------------------
+
+Old Pixel Drawing Function (Too Slow!):
+
+//Dead for all intents and purposes
+
+void DrawPixels(unsigned short howMany, unsigned short Pos)	//Scheduled for deletion
+{
+	unsigned char * palette = VRAM + 0x3F00;
+	unsigned char * nametable = VRAM + 0x2000;
+
+	for(int i = 0; i < howMany; i++)
+	{
+		//lines of tiles + how far into new row of tiles
+		unsigned short tilenum = ((Pos/2048)*32) + ((Pos%256)/8); 
+		unsigned char * tile = VRAM + (nametable[tilenum] * 16);
+
+		if(RAM[0x2000] & 16)
+			tile += 0x1000;
+
+		//current line of the tile
+		tile += (Pos/256)%8;
+
+		unsigned char color = 0;
+
+		//choose correct bit for specific pixel
+		if(((*tile)<<(Pos%8))&128) color |= 1;
+		if(((*(tile+8))<<(Pos%8))&128) color |= 2;
+
+		//unsigned char attribute = *(VRAM + 0x23C0 + (Pos/2048));
+		//color |= attribute << 2;
+		///FUCKKKKK HOW DO I ATRRIBUTE BITS?!
+
+		PutPixel(palette[color], Pos);
+		Pos++;
+	}
+}
+
+----------------------------------------------------------------------------------
+
+random "true" scrolling math:
+
+	//unsigned short CurrPixel;
+	//unsigned char Tile_x;
+	//unsigned char Tile_y;
+
+	//if(pixel % 256 == 0 && pixel != 0 && RAM[0x2001] & 8 && RAM[0x2001] & 16)
+	//	PPUaddr = PPUTempAddr & 0x41F;
+
+	//CurrPixel = PPUaddr & 0x3FF;
+	//Tile_x = CurrPixel % 8;
+	//Tile_y = CurrPixel / 8;
+	//CurrPixel = (Tile_y * 256) + Tile_x + xoffset + ((PPUaddr >> 12) & 7);
+
+	
+	///after draw code:
+	//PPUaddr &= 0xC00;
+	//Tile_y = pixel / 256;
+	//PPUaddr |= (Tile_y % 8) << 12;
+	//Tile_x = pixel % 256;
+	//xoffset = Tile_x % 8;
+	//PPUaddr |= (Tile_y / 8) * 32 + (Tile_x / 8);
+
+
+------------------------------------------------------------------------------------------
+
+Old sound buffer playing code:
+
+void PlayBufs(unsigned char * pulse1buf, unsigned char * pulse2buf, unsigned char * trianglebuf)
+{
+	unsigned long length;
+	void * writePtr;
+
+	ds8->CreateSoundBuffer(&bufdesc, &dsBuffer, NULL);
+		
+	dsBuffer->Lock(0, 44100, &writePtr, &length, NULL, NULL, 0);
+
+	memcpy(writePtr, pulse1buf, 44100);
+
+	dsBuffer->Unlock(&writePtr, length, NULL, 0);
+	dsBuffer->Play(0,0,0);
+
+	ds8->CreateSoundBuffer(&bufdesc, &dsBuffer, NULL);
+
+	dsBuffer->Lock(0,44100,&writePtr, &length, NULL, NULL, 0);
+
+	memcpy(writePtr, pulse2buf, 44100);
+
+	dsBuffer->Unlock(&writePtr, length, NULL, 0);
+	dsBuffer->Play(0,0,0);
+
+	ds8->CreateSoundBuffer(&bufdesc, &dsBuffer, NULL);
+
+	dsBuffer->Lock(0,44100,&writePtr, &length, NULL, NULL, 0);
+
+	memcpy(writePtr, trianglebuf, 44100);
+
+	dsBuffer->Unlock(&writePtr, length, NULL, 0);
+	dsBuffer->Play(0,0,0);
+}
+
+------------------------------------------------------------------------------------
+Old Graphics Code:
+
+void StartDraw()
+{
+	unsigned char color = VRAM[0x3F00];
+	glClearColor(nes_palette[color][0] / 255.0,
+		nes_palette[color][1] / 255.0,
+		nes_palette[color][2] / 255.0, 255);
+
+	glClear(GL_COLOR_BUFFER_BIT);
+	glBegin(GL_QUADS);
+}
+
+void EndDraw()
+{
+	glEnd();
+	SwapBuffers(hDC);
+}
+
+void PutPixel(unsigned char color, int pos)
+{
+	glColor3f(
+		(float)(nes_palette[color][0]/255.0),
+		(float)(nes_palette[color][1]/255.0),
+		(float)(nes_palette[color][2]/255.0));
+
+	int x = pos % 256, y = pos / 256;
+
+	glVertex2i(x, y);
+	glVertex2i(x, y + 1);
+	glVertex2i(x + 1, y + 1);
+	glVertex2i(x + 1, y);
+}
+
+------------------------------------------------------------------------------------

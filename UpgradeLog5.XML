@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="NES Emulator">
+</Property><Property Name="Solution File" Value="J:\Other Stuff\My Creations\Visual Studio\Projects\NES Emulator\NES Emulator.sln">
+</Property><Property Name="Date" Value="Wednesday, February 02, 2011">
+</Property><Property Name="Time" Value="16:36 PM">
+</Property><Property Name="Log Number" Value="5">
+</Property></Properties><Event ErrorLevel="2" Project="J:\Other Stuff\My Creations\Visual Studio\Projects\NES Emulator\NES Emulator\NES Emulator.vcxproj" Source="NES Emulator" Description="Cannot load the project due to a corrupt project file.">
+</Event><Event ErrorLevel="2" Project="NES Emulator" Source="NES Emulator\NES Emulator.vcxproj" Description="Project upgrade failed.">
+</Event><Event ErrorLevel="3" Project="NES Emulator" Source="NES Emulator\NES Emulator.vcxproj" Description="Not Converted">
+</Event><Event ErrorLevel="2" Project="J:\Other Stuff\My Creations\Visual Studio\Projects\NES Emulator\NESemuWIN\NESemuWIN.vcxproj" Source="NESemuWIN" Description="Cannot load the project due to a corrupt project file.">
+</Event><Event ErrorLevel="2" Project="NESemuWIN" Source="NESemuWIN\NESemuWIN.vcxproj" Description="Project upgrade failed.">
+</Event><Event ErrorLevel="3" Project="NESemuWIN" Source="NESemuWIN\NESemuWIN.vcxproj" Description="Not Converted">
+</Event><Event ErrorLevel="2" Project="J:\Other Stuff\My Creations\Visual Studio\Projects\NES Emulator\Project 8\Project 8.vcxproj" Source="Project 8" Description="Cannot load the project due to a corrupt project file.">
+</Event><Event ErrorLevel="2" Project="Project 8" Source="Project 8\Project 8.vcxproj" Description="Project upgrade failed.">
+</Event><Event ErrorLevel="3" Project="Project 8" Source="Project 8\Project 8.vcxproj" Description="Not Converted">
+</Event><Event ErrorLevel="0" Project="" Source="NES Emulator.sln" Description="The solution file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="" Source="NES Emulator.sln" Description="No Conversion Required">
+</Event></UpgradeLog>
