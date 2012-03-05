@@ -17,46 +17,46 @@ long long CPUTicksNeeded;
 
 void UpdateNES()
 {
-	QueryPerformanceCounter(&CPUCurrentTicks);
-	if(CPUCurrentTicks.QuadPart - CPUStartTicks.QuadPart >= CPUTicksNeeded)
-	{
-		QueryPerformanceCounter(&CPUStartTicks);
-		
-		unsigned int cycles = 1789772.5 / UPFREQ;
-		RunAPU(cycles);
-		RunCPU(cycles);
-	}
+    QueryPerformanceCounter(&CPUCurrentTicks);
+    if(CPUCurrentTicks.QuadPart - CPUStartTicks.QuadPart >= CPUTicksNeeded)
+    {
+        QueryPerformanceCounter(&CPUStartTicks);
+        
+        unsigned int cycles = 1789772.5 / UPFREQ;
+        RunAPU(cycles);
+        RunCPU(cycles);
+    }
 
-	//Sleep(1);
+    //Sleep(1);
 }
 
 void StartNES()
 {
-	ResetNES();
-	QueryPerformanceFrequency(&Frequency);
+    ResetNES();
+    QueryPerformanceFrequency(&Frequency);
 
-	CPUTicksNeeded = Frequency.QuadPart / UPFREQ; 
-	QueryPerformanceFrequency(&CPUStartTicks);
+    CPUTicksNeeded = Frequency.QuadPart / UPFREQ; 
+    QueryPerformanceFrequency(&CPUStartTicks);
 
-	StartCPU();
-	StartPPU();
-	StartInput();
-	StartAPU();
+    StartCPU();
+    StartPPU();
+    StartInput();
+    StartAPU();
 }
 
 void ResetNES()
 {
-	ZeroMemory(RAM, 0x8000); //Don't clear program!
-	ZeroMemory(VRAM + 0x2000, 0x2000); //Don't clear pattern tables!
-	ZeroMemory(SPRRAM, 0x100);
+    ZeroMemory(RAM, 0x8000); //Don't clear program!
+    ZeroMemory(VRAM + 0x2000, 0x2000); //Don't clear pattern tables!
+    ZeroMemory(SPRRAM, 0x100);
 }
 
 void PauseNES()
 {
-	if(status.play)
-	{
-		status.pause = 1;
-		status.play = 0;
-		GetPauseInfo();
-	}
+    if(status.play)
+    {
+        status.pause = 1;
+        status.play = 0;
+        GetPauseInfo();
+    }
 }

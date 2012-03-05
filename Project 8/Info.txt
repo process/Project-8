@@ -72,62 +72,62 @@ Old Pixel Drawing Function (Too Slow!):
 
 //Dead for all intents and purposes
 
-void DrawPixels(unsigned short howMany, unsigned short Pos)	//Scheduled for deletion
+void DrawPixels(unsigned short howMany, unsigned short Pos)    //Scheduled for deletion
 {
-	unsigned char * palette = VRAM + 0x3F00;
-	unsigned char * nametable = VRAM + 0x2000;
+    unsigned char * palette = VRAM + 0x3F00;
+    unsigned char * nametable = VRAM + 0x2000;
 
-	for(int i = 0; i < howMany; i++)
-	{
-		//lines of tiles + how far into new row of tiles
-		unsigned short tilenum = ((Pos/2048)*32) + ((Pos%256)/8); 
-		unsigned char * tile = VRAM + (nametable[tilenum] * 16);
+    for(int i = 0; i < howMany; i++)
+    {
+        //lines of tiles + how far into new row of tiles
+        unsigned short tilenum = ((Pos/2048)*32) + ((Pos%256)/8); 
+        unsigned char * tile = VRAM + (nametable[tilenum] * 16);
 
-		if(RAM[0x2000] & 16)
-			tile += 0x1000;
+        if(RAM[0x2000] & 16)
+            tile += 0x1000;
 
-		//current line of the tile
-		tile += (Pos/256)%8;
+        //current line of the tile
+        tile += (Pos/256)%8;
 
-		unsigned char color = 0;
+        unsigned char color = 0;
 
-		//choose correct bit for specific pixel
-		if(((*tile)<<(Pos%8))&128) color |= 1;
-		if(((*(tile+8))<<(Pos%8))&128) color |= 2;
+        //choose correct bit for specific pixel
+        if(((*tile)<<(Pos%8))&128) color |= 1;
+        if(((*(tile+8))<<(Pos%8))&128) color |= 2;
 
-		//unsigned char attribute = *(VRAM + 0x23C0 + (Pos/2048));
-		//color |= attribute << 2;
-		///FUCKKKKK HOW DO I ATRRIBUTE BITS?!
+        //unsigned char attribute = *(VRAM + 0x23C0 + (Pos/2048));
+        //color |= attribute << 2;
+        ///FUCKKKKK HOW DO I ATRRIBUTE BITS?!
 
-		PutPixel(palette[color], Pos);
-		Pos++;
-	}
+        PutPixel(palette[color], Pos);
+        Pos++;
+    }
 }
 
 ----------------------------------------------------------------------------------
 
 random "true" scrolling math:
 
-	//unsigned short CurrPixel;
-	//unsigned char Tile_x;
-	//unsigned char Tile_y;
+    //unsigned short CurrPixel;
+    //unsigned char Tile_x;
+    //unsigned char Tile_y;
 
-	//if(pixel % 256 == 0 && pixel != 0 && RAM[0x2001] & 8 && RAM[0x2001] & 16)
-	//	PPUaddr = PPUTempAddr & 0x41F;
+    //if(pixel % 256 == 0 && pixel != 0 && RAM[0x2001] & 8 && RAM[0x2001] & 16)
+    //    PPUaddr = PPUTempAddr & 0x41F;
 
-	//CurrPixel = PPUaddr & 0x3FF;
-	//Tile_x = CurrPixel % 8;
-	//Tile_y = CurrPixel / 8;
-	//CurrPixel = (Tile_y * 256) + Tile_x + xoffset + ((PPUaddr >> 12) & 7);
+    //CurrPixel = PPUaddr & 0x3FF;
+    //Tile_x = CurrPixel % 8;
+    //Tile_y = CurrPixel / 8;
+    //CurrPixel = (Tile_y * 256) + Tile_x + xoffset + ((PPUaddr >> 12) & 7);
 
-	
-	///after draw code:
-	//PPUaddr &= 0xC00;
-	//Tile_y = pixel / 256;
-	//PPUaddr |= (Tile_y % 8) << 12;
-	//Tile_x = pixel % 256;
-	//xoffset = Tile_x % 8;
-	//PPUaddr |= (Tile_y / 8) * 32 + (Tile_x / 8);
+    
+    ///after draw code:
+    //PPUaddr &= 0xC00;
+    //Tile_y = pixel / 256;
+    //PPUaddr |= (Tile_y % 8) << 12;
+    //Tile_x = pixel % 256;
+    //xoffset = Tile_x % 8;
+    //PPUaddr |= (Tile_y / 8) * 32 + (Tile_x / 8);
 
 
 ------------------------------------------------------------------------------------------
@@ -136,35 +136,35 @@ Old sound buffer playing code:
 
 void PlayBufs(unsigned char * pulse1buf, unsigned char * pulse2buf, unsigned char * trianglebuf)
 {
-	unsigned long length;
-	void * writePtr;
+    unsigned long length;
+    void * writePtr;
 
-	ds8->CreateSoundBuffer(&bufdesc, &dsBuffer, NULL);
-		
-	dsBuffer->Lock(0, 44100, &writePtr, &length, NULL, NULL, 0);
+    ds8->CreateSoundBuffer(&bufdesc, &dsBuffer, NULL);
+        
+    dsBuffer->Lock(0, 44100, &writePtr, &length, NULL, NULL, 0);
 
-	memcpy(writePtr, pulse1buf, 44100);
+    memcpy(writePtr, pulse1buf, 44100);
 
-	dsBuffer->Unlock(&writePtr, length, NULL, 0);
-	dsBuffer->Play(0,0,0);
+    dsBuffer->Unlock(&writePtr, length, NULL, 0);
+    dsBuffer->Play(0,0,0);
 
-	ds8->CreateSoundBuffer(&bufdesc, &dsBuffer, NULL);
+    ds8->CreateSoundBuffer(&bufdesc, &dsBuffer, NULL);
 
-	dsBuffer->Lock(0,44100,&writePtr, &length, NULL, NULL, 0);
+    dsBuffer->Lock(0,44100,&writePtr, &length, NULL, NULL, 0);
 
-	memcpy(writePtr, pulse2buf, 44100);
+    memcpy(writePtr, pulse2buf, 44100);
 
-	dsBuffer->Unlock(&writePtr, length, NULL, 0);
-	dsBuffer->Play(0,0,0);
+    dsBuffer->Unlock(&writePtr, length, NULL, 0);
+    dsBuffer->Play(0,0,0);
 
-	ds8->CreateSoundBuffer(&bufdesc, &dsBuffer, NULL);
+    ds8->CreateSoundBuffer(&bufdesc, &dsBuffer, NULL);
 
-	dsBuffer->Lock(0,44100,&writePtr, &length, NULL, NULL, 0);
+    dsBuffer->Lock(0,44100,&writePtr, &length, NULL, NULL, 0);
 
-	memcpy(writePtr, trianglebuf, 44100);
+    memcpy(writePtr, trianglebuf, 44100);
 
-	dsBuffer->Unlock(&writePtr, length, NULL, 0);
-	dsBuffer->Play(0,0,0);
+    dsBuffer->Unlock(&writePtr, length, NULL, 0);
+    dsBuffer->Play(0,0,0);
 }
 
 ------------------------------------------------------------------------------------
@@ -172,34 +172,34 @@ Old Graphics Code:
 
 void StartDraw()
 {
-	unsigned char color = VRAM[0x3F00];
-	glClearColor(nes_palette[color][0] / 255.0,
-		nes_palette[color][1] / 255.0,
-		nes_palette[color][2] / 255.0, 255);
+    unsigned char color = VRAM[0x3F00];
+    glClearColor(nes_palette[color][0] / 255.0,
+        nes_palette[color][1] / 255.0,
+        nes_palette[color][2] / 255.0, 255);
 
-	glClear(GL_COLOR_BUFFER_BIT);
-	glBegin(GL_QUADS);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBegin(GL_QUADS);
 }
 
 void EndDraw()
 {
-	glEnd();
-	SwapBuffers(hDC);
+    glEnd();
+    SwapBuffers(hDC);
 }
 
 void PutPixel(unsigned char color, int pos)
 {
-	glColor3f(
-		(float)(nes_palette[color][0]/255.0),
-		(float)(nes_palette[color][1]/255.0),
-		(float)(nes_palette[color][2]/255.0));
+    glColor3f(
+        (float)(nes_palette[color][0]/255.0),
+        (float)(nes_palette[color][1]/255.0),
+        (float)(nes_palette[color][2]/255.0));
 
-	int x = pos % 256, y = pos / 256;
+    int x = pos % 256, y = pos / 256;
 
-	glVertex2i(x, y);
-	glVertex2i(x, y + 1);
-	glVertex2i(x + 1, y + 1);
-	glVertex2i(x + 1, y);
+    glVertex2i(x, y);
+    glVertex2i(x, y + 1);
+    glVertex2i(x + 1, y + 1);
+    glVertex2i(x + 1, y);
 }
 
 ------------------------------------------------------------------------------------
