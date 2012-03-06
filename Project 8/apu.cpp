@@ -1,3 +1,5 @@
+#include <Windows.h>
+
 #include "Project 8.h"
 #include "APU.h"
 #include "sound.h"
@@ -173,7 +175,7 @@ void Triangle()
 
 void RunAPU(unsigned int cycles)
 {
-    if(status.sound == 0)
+    if(!Project8::soundActive)
     {
         memset(SoundData, 0, 44100 * 2);
         WriteBuffer(Pulse1Buf, SoundData, 44100 * 2);

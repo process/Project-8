@@ -1,3 +1,5 @@
+#include <Windows.h>
+
 #include "Project 8.h"
 
 unsigned char bit;

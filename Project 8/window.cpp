@@ -1,3 +1,5 @@
+#include <Windows.h>
+
 #include "Project 8.h"
 
 #include "resource.h"
@@ -9,22 +11,24 @@
 #include "logging.h"
 #include "debug.h"
 
-LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg, 
-                         WPARAM wParam, LPARAM lParam);
-void MakeMenu(HWND hwnd);
-char logging = 0;
-
-HWND hwndWindow;
-HINSTANCE hInst;
-WNDCLASSEX wc;
-
-HWND MakeWindow(int width, int height,
-                HINSTANCE hInstance)
+Window::Window()
 {
-    hInst = hInstance;
+    hInst = GetModuleHandle(0); //Get hInstance of this process.
+}
+
+Window::Window(int width, int height)
+{
+    hInst = GetModuleHandle(0);
+    makeWindow(width, height);
+}
+
+HWND Window::makeWindow(int width, int height)
+{
+    WNDCLASSEX wc;
+
     wc.cbSize = sizeof(WNDCLASSEX);
     wc.style = CS_HREDRAW | CS_VREDRAW;
-    wc.lpfnWndProc = MainWndProc;
+    wc.lpfnWndProc = windowProc;
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 0;
     wc.hInstance = hInst;
@@ -47,7 +51,7 @@ HWND MakeWindow(int width, int height,
         WS_OVERLAPPEDWINDOW, true,
         WS_EX_ACCEPTFILES);
 
-    hwndWindow = CreateWindowEx(
+    hwnd = CreateWindowEx(
         WS_EX_ACCEPTFILES,
         "Win", "Project 8",
         WS_OVERLAPPEDWINDOW | WS_VISIBLE,
@@ -57,21 +61,21 @@ HWND MakeWindow(int width, int height,
         NULL, LoadMenu(hInst, MAKEINTRESOURCE(MYMENU)), 
         hInst, NULL);
 
-    return hwndWindow;
+    return hwnd;
 }
 
-HWND GetWindowHwnd()
+HWND Window::getWindowHwnd()
 {
-    return hwndWindow;
+    return hwnd;
 }
 
-void OpenDialog()
+void Window::openDialog()
 {
     OPENFILENAME ofn;
 
     ZeroMemory(&ofn,sizeof(ofn));
     ofn.lStructSize = sizeof(ofn);
-    ofn.hwndOwner = hwndWindow;
+    ofn.hwndOwner = hwnd;
     ofn.hInstance = NULL;
     ofn.lpstrFilter = "NES Roms (.nes)\0*.NES\0All Files (*.*)\0*.*";
     ofn.nFilterIndex = 1;
@@ -96,7 +100,7 @@ void OpenDialog()
     free(ofn.lpstrFile);
 }
 
-void FileDropped(HDROP file)
+void Window::fileDropped(HDROP file)
 {
     int length = DragQueryFile(file, 0, NULL, 0); 
     length++; //Accomodate for \0 at end of string
@@ -108,20 +112,20 @@ void FileDropped(HDROP file)
     free(filepath);
 }
 
-void ChangeSound()
+void Window::changeSound()
 {
-    if(status.sound == 1)
+    if(Project8::soundActive)
     {
-        status.sound = 0;
-        CheckMenuItem(GetMenu(hwndWindow), ID_MUTE, MF_CHECKED);
+        Project8::soundActive = false;
+        CheckMenuItem(GetMenu(hwnd), ID_MUTE, MF_CHECKED);
         return;
     }
 
-    status.sound = 1;
-    CheckMenuItem(GetMenu(hwndWindow), ID_MUTE, MF_CHECKED);
+    Project8::soundActive = true;
+    CheckMenuItem(GetMenu(hwnd), ID_MUTE, MF_CHECKED);
 }
 
-void ResizeWindow(int width, int height)
+void Window::resizeWindow(int width, int height)
 {
     RECT ClientWindow;
     ClientWindow.bottom = height;
@@ -133,13 +137,14 @@ void ResizeWindow(int width, int height)
         WS_OVERLAPPEDWINDOW, true,
         WS_EX_ACCEPTFILES);
 
-    SetWindowPos(hwndWindow, 0, 0, 0, ClientWindow.right - ClientWindow.left,
+    SetWindowPos(hwnd, 0, 0, 0, ClientWindow.right - ClientWindow.left,
         ClientWindow.bottom - ClientWindow.top, SWP_NOMOVE);
 }
 
-LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg, 
-                         WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK Window::windowProc(HWND hwnd, UINT msg, 
+    WPARAM wParam, LPARAM lParam)
 {
+    extern Window window; //DISGUSTING
     switch(msg)
     {    
         case WM_CREATE:
@@ -150,18 +155,19 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg,
             return 0;
 
         case WM_SIZE:
-            ResizeViewport(lParam & 0xFFFF, (lParam>>16) & 0xFFFF);
+            extern Graphics GFX;
+            GFX.resizeViewport(lParam & 0xFFFF, (lParam>>16) & 0xFFFF);
             return 0;
 
         case WM_DROPFILES:
-            FileDropped((HDROP) wParam);
+            window.fileDropped((HDROP) wParam);
             return 0;
 
         case WM_COMMAND:
             switch(wParam & 0xFFFF)
             {
                 case ID_OPEN:
-                    OpenDialog();
+                    window.openDialog();
                     break;
 
                 case ID_RESET:
@@ -169,27 +175,27 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg,
                     break;
 
                 case ID_1X:
-                    ResizeWindow(256, 240);
+                    window.resizeWindow(256, 240);
                     break;
 
                 case ID_2X:
-                    ResizeWindow(512, 480);
+                    window.resizeWindow(512, 480);
                     break;
 
                 case ID_3X:
-                    ResizeWindow(768, 720);
+                    window.resizeWindow(768, 720);
                     break;
 
                 case ID_DEBUG:
-                    MakeDebugger(hInst);
+                    Debug::makeDebugger();
                     break;
                 
                 case ID_MUTE:
-                    ChangeSound();
+                    window.changeSound();
                     break;
 
                 case ID_LOG:
-                    if(status.logging == 0)
+                    if(!Project8::logging)
                         StartLogging();
                     else
                         EndLogging();
@@ -206,3 +212,6 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg,
 
     return DefWindowProc(hwnd,msg,wParam,lParam);
 }
+
+//Delete these?
+char logging = 0;

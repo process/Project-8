@@ -1,10 +1,16 @@
-#include "Project 8.h"
+#include <Windows.h>
+#include <stdio.h>
 
-#include <cstdio>
+#include "Project 8.h"
+#include "window.h"
+#include "CPU.h"
+#include "NES.h"
 
 HANDLE LogFile;
-extern HWND hwndWindow;
 char LogBuf[256];
+
+//PIG DISGUSTING
+extern Window window;
 
 void StartLogging()
 {
@@ -17,24 +23,21 @@ void StartLogging()
     if(result == IDCANCEL)
         return;
 
-    status.logging = 1;
-    HMENU menu = GetMenu(hwndWindow);
+    Project8::logging = true;
+    HMENU menu = GetMenu(window.getWindowHwnd());
     ModifyMenu(menu, 9005 /*ID_LOG*/, MF_BYCOMMAND | MF_CHECKED, 9005 /*ID_LOG*/, "Enable Logging");
-    SetMenu(hwndWindow, menu);
+    SetMenu(window.getWindowHwnd(), menu);
 
     LogFile =  CreateFile("log.txt", GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 }
 
 void UpdateLog()
 {
-    extern unsigned char A;
-    extern unsigned char X;
-    extern unsigned char Y;
-    extern unsigned char S;
-    extern unsigned char P;
-    extern unsigned short PC;
+    CPU* cpu = (CPU*)getCPU();
 
-    sprintf(LogBuf,"PC:%.4X Opcode:%.2X\tA:%.2X X:%.2X Y:%.2X\tS:%.2X P:%.2X\n", PC, RAM[PC], A, X, Y, S, P);
+    //sprintf(LogBuf,
+    //    "PC:%.4X Opcode:%.2X\tA:%.2X X:%.2X Y:%.2X\tS:%.2X P:%.2X\n", 
+    //    cpu->PC, RAM[cpu->PC], cpu->A, cpu->X, cpu->Y, cpu->S, cpu->P);
     int len = strlen(LogBuf);
     unsigned long d = 0;
 
@@ -43,11 +46,11 @@ void UpdateLog()
 
 void EndLogging()
 {
-    status.logging = 0;
+    Project8::logging = false;
 
-    HMENU menu = GetMenu(hwndWindow);
+    HMENU menu = GetMenu(window.getWindowHwnd());
     ModifyMenu(menu, 9005 /*ID_LOG*/, MF_BYCOMMAND, 9005 /*ID_LOG*/, "Enable Logging");
-    SetMenu(hwndWindow, menu);
+    SetMenu(window.getWindowHwnd(), menu);
 
     CloseHandle(LogFile);
 }

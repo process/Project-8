@@ -10,6 +10,48 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="APU.cpp" />
+    <ClCompile Include="CPU.cpp" />
+    <ClCompile Include="Debug.cpp" />
+    <ClCompile Include="externs.cpp" />
+    <ClCompile Include="File.cpp" />
+    <ClCompile Include="Graphics.cpp" />
+    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Logging.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Memory.cpp" />
+    <ClCompile Include="NES.cpp" />
+    <ClCompile Include="PPU.cpp" />
+    <ClCompile Include="ROM.cpp" />
+    <ClCompile Include="Sound.cpp" />
+    <ClCompile Include="Window.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="APU.h" />
+    <ClInclude Include="CPU.h" />
+    <ClInclude Include="Debug.h" />
+    <ClInclude Include="File.h" />
+    <ClInclude Include="Graphics.h" />
+    <ClInclude Include="Input.h" />
+    <ClInclude Include="instructions.h" />
+    <ClInclude Include="Logging.h" />
+    <ClInclude Include="Mem.h" />
+    <ClInclude Include="NES.h" />
+    <ClInclude Include="PPU.h" />
+    <ClInclude Include="Project 8.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Sound.h" />
+    <ClInclude Include="Window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="icon1.ico" />
+    <None Include="Info.txt" />
+    <None Include="log.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resources.rc" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{79C11C51-5DE0-47A8-BAFC-C85E420B6409}</ProjectGuid>
     <RootNamespace>Project8</RootNamespace>
@@ -71,46 +113,6 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="apu.cpp" />
-    <ClCompile Include="cpu.cpp" />
-    <ClCompile Include="debug.cpp" />
-    <ClCompile Include="externs.cpp" />
-    <ClCompile Include="file.cpp" />
-    <ClCompile Include="graphics.cpp" />
-    <ClCompile Include="input.cpp" />
-    <ClCompile Include="logging.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="memory.cpp" />
-    <ClCompile Include="NES.cpp" />
-    <ClCompile Include="ppu.cpp" />
-    <ClCompile Include="rom.cpp" />
-    <ClCompile Include="sound.cpp" />
-    <ClCompile Include="window.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Info.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="instruction code.h" />
-    <ClInclude Include="APU.h" />
-    <ClInclude Include="CPU.h" />
-    <ClInclude Include="debug.h" />
-    <ClInclude Include="file.h" />
-    <ClInclude Include="graphics.h" />
-    <ClInclude Include="input.h" />
-    <ClInclude Include="instructions.h" />
-    <ClInclude Include="logging.h" />
-    <ClInclude Include="mem.h" />
-    <ClInclude Include="PPU.h" />
-    <ClInclude Include="Project 8.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="sound.h" />
-    <ClInclude Include="window.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="resources.rc" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

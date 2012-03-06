@@ -1,117 +1,121 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
-    </Filter>
-    <Filter Include="Source Files\Header Files">
+    <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{973cf43f-4f41-4cc4-bdfc-127099087f2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{5f5e160b-41e8-46bd-ae04-7ff2dd32301d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="apu.cpp">
+    <ClCompile Include="Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cpu.cpp">
+    <ClCompile Include="APU.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="debug.cpp">
+    <ClCompile Include="CPU.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="externs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="file.cpp">
+    <ClCompile Include="File.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="graphics.cpp">
+    <ClCompile Include="Graphics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="input.cpp">
+    <ClCompile Include="Input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="logging.cpp">
+    <ClCompile Include="Logging.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="memory.cpp">
+    <ClCompile Include="Memory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NES.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ppu.cpp">
+    <ClCompile Include="PPU.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="rom.cpp">
+    <ClCompile Include="ROM.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sound.cpp">
+    <ClCompile Include="Sound.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="APU.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CPU.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Debug.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="File.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="instructions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Logging.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PPU.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Project 8.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NES.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.txt">
       <Filter>Source Files</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="instruction code.h">
+    <None Include="log.txt">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="APU.h">
-      <Filter>Source Files\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CPU.h">
-      <Filter>Source Files\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="debug.h">
-      <Filter>Source Files\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="file.h">
-      <Filter>Source Files\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics.h">
-      <Filter>Source Files\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="input.h">
-      <Filter>Source Files\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="instructions.h">
-      <Filter>Source Files\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="logging.h">
-      <Filter>Source Files\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mem.h">
-      <Filter>Source Files\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PPU.h">
-      <Filter>Source Files\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Project 8.h">
-      <Filter>Source Files\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Source Files\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="sound.h">
-      <Filter>Source Files\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="window.h">
-      <Filter>Source Files\Header Files</Filter>
-    </ClInclude>
+    </None>
+    <None Include="icon1.ico">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resources.rc">

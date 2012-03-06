@@ -1,8 +1,9 @@
+#include <Windows.h>
+#include <dsound.h>
+
 #include "Project 8.h"
 #include "sound.h"
 #include "window.h"
-
-#include <dsound.h>
 
 #pragma comment (lib,"dsound.lib")
 
@@ -10,12 +11,15 @@ LPDIRECTSOUND8 ds8;
 DSBUFFERDESC bufdesc;
 WAVEFORMATEX waveFormat;
 
+//This is bad :(
+extern Window window;
+
 void InitDSound()
 {
     int seconds = 1;
 
     DirectSoundCreate8(NULL, &ds8, NULL);
-    ds8->SetCooperativeLevel(GetWindowHwnd(), DSSCL_NORMAL);
+    ds8->SetCooperativeLevel(window.getWindowHwnd(), DSSCL_NORMAL);
 
     waveFormat.wFormatTag = WAVE_FORMAT_PCM;
     waveFormat.nChannels = 1;

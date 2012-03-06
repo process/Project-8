@@ -1,5 +1,8 @@
+#include <windows.h>
+
 #include "Project 8.h"
 
+#include "CPU.h"
 #include "PPU.h"
 #include "input.h"
 #include "mem.h"
@@ -42,21 +45,21 @@ unsigned char Y;
     } \
     addr += Y;
 
-void StartCPU()
+void CPU::StartCPU()
 {
     PC = RAM[0xFFFC+1]<<8|RAM[0xFFFC];
     S = 0xFF;
     P = 32;
-    CPU.inNMI = 0;
+    this->inNMI = 0;
 }
 
-void NZ_FLAGS(unsigned char REG)
+void inline NZ_FLAGS(unsigned char REG)
 {
     if (REG & 128) P |= 128;   else P &= 127;
     if (!REG) P |= 2;          else P &= 0xFD;
 }
 
-unsigned short fetchword()
+unsigned short inline fetchword()
 {
     PC++;
     unsigned char lo = RAM[PC++];
@@ -65,13 +68,13 @@ unsigned short fetchword()
     return (hi << 8) | lo;
 }
 
-unsigned char fetchbyte()
+unsigned char inline fetchbyte()
 {
     PC++;
     return RAM[PC++];
 }
 
-void pushw(unsigned short word)
+void CPU::pushw(unsigned short word)
 {
     RAM[S+0x100] = (unsigned char) (word >> 8);
     S--;
@@ -79,7 +82,7 @@ void pushw(unsigned short word)
     S--;
 }
 
-unsigned short int popw()
+unsigned short CPU::popw()
 {
     S++;
     unsigned char lo = RAM[S+0x100];
@@ -88,19 +91,19 @@ unsigned short int popw()
     return ((hi << 8) | lo);
 }
 
-void pushb(unsigned char byte)
+void CPU::pushb(unsigned char byte)
 {
     RAM[S+0x100] = byte;
     S--;
 }
 
-unsigned char popb()
+unsigned char CPU::popb()
 {
     S++;
     return RAM[S+0x100];
 }
 
-void RunCPU(int cycles)
+void CPU::RunCPU(int cycles)
 { 
     char change;
     unsigned char byte;
@@ -113,26 +116,20 @@ void RunCPU(int cycles)
 start:
     OP = RAM[PC];
 
-     instrCycles = OPcycles[OP];
+    instrCycles = OPcycles[OP];
     cycles -= instrCycles;
 
-    if(RAM[0x2000]&1)
-        int fuck=2;
-
-    if((RAM[0x2000]&1) == 0)
-        int derp = 2;
-
-    if(CheckBreakAddr(PC))
+    if(Debug::checkBreakAddr(PC))
     {
         PauseNES();
         MessageBoxEx(NULL, "Breakpoint hit!", "Debug", MB_OK | MB_SETFOREGROUND, 0);
         cycles = -1;
     }
 
-    if(status.logging)
+    if(Project8::logging)
         UpdateLog();
 
-    UpdateIPS();
+    Debug::updateIPS();
 
     switch(OP)
     {
@@ -362,7 +359,7 @@ start:
             goto rol;
 
         case RTI:
-            CPU.inNMI = 0;
+            this->inNMI = 0;
             P = popb();
             PC = popw();
             P &= 0xEF;
@@ -1036,7 +1033,7 @@ start:
         case HLT_B2:
         case HLT_D2:
         case HLT_F2:        
-            status.play = 0;
+            Project8::playing = false;
 
 
         case SKB_04:
@@ -1518,7 +1515,12 @@ start:
             PC += change;
             goto end;
 
-        end:
+           end:
+            //this->A = A;
+            //this->X = X;
+            //this->Y = Y;
+            //this->P = P;
+            //this->PC = PC;
             UpdatePPU(instrCycles*3);
             if(cycles > 0) goto start;
     }

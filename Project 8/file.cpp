@@ -1,9 +1,20 @@
 #include <cstring>
+#include <Windows.h>
 
 #include "Project 8.h"
 
 #include "file.h"
 #include "mem.h"
+
+//Initialize globals
+char ROMINFO::id[4];
+char ROMINFO::prg;
+char ROMINFO::vram;
+char ROMINFO::info1;
+char ROMINFO::info2;
+char ROMINFO::ram; //possibly unused?
+char ROMINFO::info3;
+char ROMINFO::reserved[6];
 
 void OpenFile(char * filepath)
 {
@@ -12,14 +23,14 @@ void OpenFile(char * filepath)
     if(GetRomInfo(file))
         return;
 
-    InitMemory(ROMINFO.prg);
+    InitMemory(ROMINFO::prg);
 
     char * data = (char*)malloc(0x4000);
     
     ReadData(file, data, 0x4000);
     CopyPRG(data, 1);    //copy same data twice
 
-    if(ROMINFO.prg == 2)
+    if(ROMINFO::prg == 2)
     {
         ReadData(file, data, 0x4000); //additional PRG bank
         CopyPRG(data, 2);
@@ -29,11 +40,11 @@ void OpenFile(char * filepath)
 
     memcpy(VRAM, data, 0x2000);
 
-    if(status.play)
+    if(Project8::playing)
         ResetNES();
 
     else
-        status.play = 1;
+        Project8::playing = false;
     
     StartNES();
 
@@ -50,10 +61,17 @@ void ReadData(HANDLE file, void * data, int bytes)
 
 char GetRomInfo(HANDLE file)
 {
-    ReadData(file, &ROMINFO, 16);
+    ReadData(file, ROMINFO::id, 4);
+    ReadData(file, &ROMINFO::prg, 1);
+    ReadData(file, &ROMINFO::vram, 1);
+    ReadData(file, &ROMINFO::info1, 1);
+    ReadData(file, &ROMINFO::info2, 1);
+    ReadData(file, &ROMINFO::ram, 1);
+    ReadData(file, &ROMINFO::info3, 1);
+    ReadData(file, ROMINFO::reserved, 6);
     
     char NESid[4] = {'N','E','S',0x1A};
-    if(memcmp(ROMINFO.id, NESid, 4))
+    if(memcmp(ROMINFO::id, NESid, 4))
     {
         MessageBox(NULL, "Invalid ROM file.", "Error", MB_OK);
         return 1;

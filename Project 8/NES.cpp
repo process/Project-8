@@ -1,3 +1,4 @@
+#include <windows.h>
 #include "Project 8.h"
 
 #include "CPU.h"
@@ -5,6 +6,9 @@
 #include "APU.h"
 #include "input.h"
 #include "window.h"
+#include "debug.h"
+
+CPU* cpu;
 
 LARGE_INTEGER Frequency;
 
@@ -24,7 +28,7 @@ void UpdateNES()
         
         unsigned int cycles = 1789772.5 / UPFREQ;
         RunAPU(cycles);
-        RunCPU(cycles);
+        cpu->RunCPU(cycles);
     }
 
     //Sleep(1);
@@ -32,16 +36,25 @@ void UpdateNES()
 
 void StartNES()
 {
+    cpu = new CPU;
+
     ResetNES();
     QueryPerformanceFrequency(&Frequency);
 
     CPUTicksNeeded = Frequency.QuadPart / UPFREQ; 
     QueryPerformanceFrequency(&CPUStartTicks);
 
-    StartCPU();
+    cpu->StartCPU();
     StartPPU();
     StartInput();
     StartAPU();
+
+    Project8::playing = true;
+}
+
+void* getCPU()
+{
+    return (void*)cpu;
 }
 
 void ResetNES()
@@ -53,10 +66,10 @@ void ResetNES()
 
 void PauseNES()
 {
-    if(status.play)
+    if(Project8::playing)
     {
-        status.pause = 1;
-        status.play = 0;
-        GetPauseInfo();
+        Project8::paused = true;
+        Project8::playing = false;
+        Debug::getPauseInfo();
     }
 }

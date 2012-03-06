@@ -1,5 +1,10 @@
+#include <stdlib.h>
+#include <Windows.h>
+
 #include "Project 8.h"
 
+#include "File.h"
+#include "NES.h"
 #include "PPU.h"
 #include "CPU.h"
 #include "graphics.h"
@@ -16,8 +21,34 @@ unsigned char * SCREEN1 = (unsigned char*)malloc(61440);
 unsigned char * SCREEN2 = (unsigned char*)malloc(61440);
 unsigned char * SPRITES = (unsigned char*)malloc(61440);
 
+Graphics GFX;
+
+unsigned char nes_palette[64][3] =
+{
+    {117, 117, 117}, { 39,  27, 143}, {  0,   0, 171}, { 71,   0, 159}, 
+    {143,   0, 119}, {171,   0,  19}, {167,   0,   0}, {127,  11,   0}, 
+    { 67,  47,   0}, {  0,  71,   0}, {  0,  81,   0}, {  0,  63,  23}, 
+    { 27,  63,  95}, {  0,   0,   0}, {  0,   0,   0}, {  0,   0,   0}, 
+
+    {188, 188, 188}, {  0, 115, 239}, { 35,  59, 239}, {131,   0, 243}, 
+    {191,   0, 191}, {231,   0,  91}, {219,  43,   0}, {203,  79,  15}, 
+    {139, 115,   0}, {  0, 151,   0}, {  0, 171,   0}, {  0, 147,  59}, 
+    {  0, 131, 139}, {  0,   0,   0}, {  0,   0,   0}, {  0,   0,   0}, 
+
+    {255, 255, 255}, { 63, 191, 255}, { 95, 151, 255}, {167, 139, 253}, 
+    {247, 123, 255}, {255, 119, 183}, {255, 119,  99}, {255, 155,  59}, 
+    {243, 191,  63}, {131, 211,  19}, { 79, 223,  75}, { 88, 248, 152}, 
+    {  0, 235, 219}, {  0,   0,   0}, {  0,   0,   0}, {  0,   0,   0}, 
+
+    {255, 255, 255}, {171, 231, 255}, {199, 215, 255}, {215, 203, 255}, 
+    {255, 199, 255}, {255, 199, 219}, {255, 191, 179}, {255, 219, 171}, 
+    {255, 231, 163}, {227, 255, 163}, {171, 243, 191}, {179, 255, 207}, 
+    {159, 255, 243}, {  0,   0,   0}, {  0,   0,   0}, {  0,   0,   0}
+};
+
 void StartPPU()
 {
+    GFX.initGraphics();
     toggle = 0;
     PPUcycles = 0;
 }
@@ -43,9 +74,9 @@ void CheckPPUaddr()
         PPULogicalAddr &= 0x3FFF;
     }
 
-    if(!(ROMINFO.info1 & 8))
+    if(!(ROMINFO::info1 & 8))
     {
-        if(ROMINFO.info1 & 1) //Vertical Mirroring
+        if(ROMINFO::info1 & 1) //Vertical Mirroring
         {    
             if(PPULogicalAddr >= 0x2800 && PPULogicalAddr < 0x3F00)
             {
@@ -200,7 +231,11 @@ void UpdatePPU(unsigned int pixels)
 
     else
     {
-        StartDraw();
+        GFX.startDraw();
+        int clearCol = VRAM[0x3F00];
+        GFX.clear(nes_palette[clearCol][0],
+            nes_palette[clearCol][1],
+            nes_palette[clearCol][2]);
         pixel = 0;
         PPUcycles = 0;
         drawing = 1;
@@ -381,7 +416,7 @@ void CreateScreenFromNameTable(unsigned char * Screen, unsigned char NameTable)
 
     else
     {
-        if(ROMINFO.info1 & 1)
+        if(ROMINFO::info1 & 1)
             pNameTable = VRAM + 0x2400;
 
         else 
@@ -442,13 +477,13 @@ void ContinueDraw(unsigned int pixels)
             break;
 
         case 1:
-            if(ROMINFO.info1 & 1) //vertical mirror
+            if(ROMINFO::info1 & 1) //vertical mirror
                 SCREEN1_ = SCREEN2;
             else SCREEN1_ = SCREEN1;
             break;
 
         case 2:
-            if(ROMINFO.info1 & 1)
+            if(ROMINFO::info1 & 1)
                 SCREEN1_ = SCREEN1;
             else SCREEN1_ = SCREEN2;
             break;
@@ -487,11 +522,12 @@ void ContinueDraw(unsigned int pixels)
             {
                 if(x > 255 - xscroll)
                 {
-                    if(ROMINFO.info1 & 1)
+                    if(ROMINFO::info1 & 1)
                     {
                         if(SCREEN2_[((pixel + xscroll) + yscroll*256) - 256])
                         {
-                            PutPixel(palette[SCREEN2_[((pixel + xscroll) + yscroll*256) - 256]], pixel);
+                            int color = palette[SCREEN2_[((pixel + xscroll) + yscroll*256) - 256]];
+                            GFX.putPixel(x, y, nes_palette[color][0], nes_palette[color][1], nes_palette[color][2]);
                             BackDrawn = 1;
                         }
 
@@ -502,7 +538,8 @@ void ContinueDraw(unsigned int pixels)
                     {
                         if(SCREEN1_[((pixel + xscroll) + yscroll*256) - 256])
                         {
-                            PutPixel(palette[SCREEN1_[((pixel + xscroll) + yscroll*256) - 256]], pixel);
+                            int color = palette[SCREEN1_[((pixel + xscroll) + yscroll*256) - 256]];
+                            GFX.putPixel(x, y, nes_palette[color][0], nes_palette[color][1], nes_palette[color][2]);
                             BackDrawn = 1;
                         }
 
@@ -512,11 +549,12 @@ void ContinueDraw(unsigned int pixels)
 
                 else if(y > 239 - yscroll)
                 {
-                    if(ROMINFO.info1 & 1)
+                    if(ROMINFO::info1 & 1)
                     {
                         if(SCREEN1_[((pixel + xscroll) + yscroll*256) - 61440])
                         {
-                            PutPixel(palette[SCREEN1_[((pixel + xscroll) + yscroll*256) - 61440]], pixel);
+                            int color = palette[SCREEN1_[((pixel + xscroll) + yscroll*256) - 61440]];
+                            GFX.putPixel(x, y, nes_palette[color][0], nes_palette[color][1], nes_palette[color][2]);
                             BackDrawn = 1;
                         }
 
@@ -527,7 +565,8 @@ void ContinueDraw(unsigned int pixels)
                     {
                         if(SCREEN2_[((pixel + xscroll) + yscroll*256) - 61440])
                         {
-                            PutPixel(palette[SCREEN2_[((pixel + xscroll) + yscroll*256) - 61440]], pixel);
+                            int color = palette[SCREEN2_[((pixel + xscroll) + yscroll*256) - 61440]];
+                            GFX.putPixel(x, y, nes_palette[color][0], nes_palette[color][1], nes_palette[color][2]);
                             BackDrawn = 1;
                         }
 
@@ -537,7 +576,8 @@ void ContinueDraw(unsigned int pixels)
 
                 else if (SCREEN1_[pixel+xscroll+(yscroll*256)])
                 {
-                    PutPixel(palette[SCREEN1_[pixel+xscroll+(yscroll*256)]], pixel);
+                    int color = palette[SCREEN1_[pixel+xscroll+(yscroll*256)]];
+                    GFX.putPixel(x, y, nes_palette[color][0], nes_palette[color][1], nes_palette[color][2]);
                     BackDrawn = 1;
                 }
 
@@ -556,7 +596,8 @@ void ContinueDraw(unsigned int pixels)
                             && x < 255 && y < 239)
                             RAM[0x2002] |= 0x64;
                         if(SPRITES[pixel] & 64 && BackDrawn) continue;
-                        PutPixel(SPRpalette[SPRITES[pixel] & 0x0F], pixel);
+                        int color = SPRpalette[SPRITES[pixel] & 0x0F];
+                        GFX.putPixel(x, y, nes_palette[color][0], nes_palette[color][1], nes_palette[color][2]);
                 }
             }
         }
@@ -564,21 +605,22 @@ void ContinueDraw(unsigned int pixels)
 
     if(PPUcycles == 82181)
     {
-        EndDraw();
+        GFX.endDraw();
         RAM[0x2002] |= 128;
 
-        if(!CPU.inNMI && (RAM[0x2000] & 128))
+        CPU* cpu = (CPU*)getCPU();
+        if(!cpu->inNMI && (RAM[0x2000] & 128))
         {
             extern unsigned short PC;
             extern unsigned char P;
             P |= 32;
-            pushw(PC);
-            pushb(P);
+            cpu->pushw(PC);
+            cpu->pushb(P);
             P |= 2;
             PC = RAM[0xFFFA + 1]<<8 | RAM[0xFFFA];    //Jumps the CPU into the NMI routine similar to a JSR
-            CPU.inNMI = 1;
+            cpu->inNMI = 1;
 
-            UpdateFPS();
+            Debug::updateFPS();
         }
     }
 }

@@ -1,5 +1,46 @@
 TODO
 
+Restructure program:
+
+Different components: different threads
+
+Project 8
+	Status variables
+
+NES
+	CPU
+	PPU
+	APU
+	RAM
+
+CPU
+	Debugging
+
+PPU
+	Graphics
+	Debugging?
+
+Window
+	NES
+	Debugging
+	Logging
+
+Graphics
+	
+
+Sound
+	
+
+Debugger
+	
+
+
+
+CPU can maybe use two jump tables.
+One to load data (AY, IY, IX, etc)
+And another to actually execute using data loaded in last jump. More research needed for this though
+
+
 Figure out how to get CPU and PPU timed correctly (ohboyherewego.jpg)
 
 USE THIS PLEASE: http://nesdev.parodius.com/NES%20emulator%20development%20guide.txt
