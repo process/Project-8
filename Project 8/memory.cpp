@@ -3,10 +3,11 @@
 
 #include "mem.h"
 
-void InitMemory(char prg)
-{
-    ZeroMemory(RAM, 0x10000);
-}
+extern unsigned char S;
+
+//Clears the memory
+void InitMemory()
+{ ZeroMemory(RAM, 0x10000); }
 
 void CopyPRG(char * data, char index)
 {
@@ -21,16 +22,35 @@ void CopyPRG(char * data, char index)
     }
 }
 
-unsigned char MemoryRead(int address)
+//Push a word to the stack
+void pushw(unsigned short word)
 {
-    unsigned char ret;
-    
-    ret = 0;
-    
-    return ret;
+    RAM[S+0x100] = (unsigned char) (word >> 8);
+    S--;
+    RAM[S+0x100] = (unsigned char) (word & 0xFF);
+    S--;
 }
 
-void MemoryWrite(int address, unsigned char val)
+//Pop a word from the stack
+unsigned short popw()
 {
+    S++;
+    unsigned char lo = RAM[S+0x100];
+    S++;
+    unsigned char hi = RAM[S+0x100];
+    return ((hi << 8) | lo);
+}
 
+//Push a byte to the stack
+void pushb(unsigned char byte)
+{
+    RAM[S+0x100] = byte;
+    S--;
+}
+
+//Pop a byte from the stack
+unsigned char popb()
+{
+    S++;
+    return RAM[S+0x100];
 }

@@ -5,12 +5,14 @@
 unsigned char bit;
 unsigned char strobe;
 
+//Init variables
 void StartInput()
 {
     bit = 0;
     strobe = 0;
 }
 
+//Read input
 void ReadInput()
 {
     switch(bit)
@@ -70,11 +72,14 @@ void ReadInput()
     bit++;
 }
 
+//Controller 2
+//Not used for now
 void ReadInput2()
 {
     RAM[0x4017] = 0x40;
 }
 
+//Used to reset 'bit'
 void WriteInput()
 {
     if(RAM[0x4016] == 1 && !strobe)

@@ -12,6 +12,7 @@ char LogBuf[256];
 //PIG DISGUSTING
 extern Window window;
 
+//Open the logging file and update the menus 
 void StartLogging()
 {
     int result = 
@@ -31,6 +32,7 @@ void StartLogging()
     LogFile =  CreateFile("log.txt", GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 }
 
+//Adds a new instruction to the log
 void UpdateLog()
 {
     CPU* cpu = (CPU*)getCPU();
@@ -44,6 +46,7 @@ void UpdateLog()
     WriteFile(LogFile, LogBuf, len, &d, NULL);
 }
 
+//Close the log file and update the menus
 void EndLogging()
 {
     Project8::logging = false;

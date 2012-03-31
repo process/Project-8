@@ -1,12 +1,6 @@
 class CPU 
 {
-public: //Change this later!
-    void pushw(unsigned short word);
-    void pushb(unsigned char byte);
-    unsigned short popw();
-    unsigned char popb();
-
-//public:
+public:
     unsigned short NMI;
     bool inNMI;
     //These cause problems with the globals

@@ -6,6 +6,8 @@
 
 #include <math.h>
 
+//Very poor sound support here.
+
 short SoundData[44100];
 
 SOUNDBUFFER Pulse1Buf = 0;
@@ -60,6 +62,8 @@ void StartAPU()
     RAM[0x400B] = 0x00;
 }
 
+//Generate a pulse (square) wave.
+//'which' is which pulse channel to render to (0 or 1)
 void Pulse(char which)
 {
     unsigned short addr;
@@ -130,6 +134,7 @@ void Pulse(char which)
     WriteBuffer(PulseBuf, SoundData, interval*2);
 }
 
+//Generate a triangle wave
 void Triangle()
 {
     unsigned short volume = 30000;
@@ -175,6 +180,7 @@ void Triangle()
 
 void RunAPU(unsigned int cycles)
 {
+    //If sound is disabled, play silence
     if(!Project8::soundActive)
     {
         memset(SoundData, 0, 44100 * 2);
@@ -182,7 +188,8 @@ void RunAPU(unsigned int cycles)
         WriteBuffer(Pulse2Buf, SoundData, 44100 * 2);
         return;
     }
-
+    
+    //Otherwise, render some sound
     interval = (44100.0 * cycles) / 1789772.5;
     Pulse(0);
 

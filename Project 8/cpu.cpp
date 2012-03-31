@@ -5,7 +5,7 @@
 #include "CPU.h"
 #include "PPU.h"
 #include "input.h"
-#include "mem.h"
+#include "Mem.h"
 #include "instructions.h"
 #include "logging.h"
 #include "debug.h"
@@ -17,6 +17,7 @@ unsigned char A;
 unsigned char X;
 unsigned char Y;
 
+//Load an absolute+Y address
 #define __AY__ \
     addr = fetchword(); \
     if((addr & 0xFF00) != ((addr + Y) & 0xFF00)) \
@@ -26,6 +27,7 @@ unsigned char Y;
     } \
     addr += Y;
 
+//Load an absolute+X address
 #define __AX__ \
     addr = fetchword(); \
     if((addr & 0xFF00) != ((addr + X) & 0xFF00)) \
@@ -35,6 +37,7 @@ unsigned char Y;
     } \
     addr += X;
 
+//Load an indirect+Y address
 #define __IY__ \
     byte = fetchbyte(); \
     addr = (RAM[(byte+1) & 0xFF] << 8) | RAM[byte]; \
@@ -45,20 +48,8 @@ unsigned char Y;
     } \
     addr += Y;
 
-void CPU::StartCPU()
-{
-    PC = RAM[0xFFFC+1]<<8|RAM[0xFFFC];
-    S = 0xFF;
-    P = 32;
-    this->inNMI = 0;
-}
-
-void inline NZ_FLAGS(unsigned char REG)
-{
-    if (REG & 128) P |= 128;   else P &= 127;
-    if (!REG) P |= 2;          else P &= 0xFD;
-}
-
+//Load a word from the next memory addresses
+//Used for 3-byte instructions
 unsigned short inline fetchword()
 {
     PC++;
@@ -68,41 +59,35 @@ unsigned short inline fetchword()
     return (hi << 8) | lo;
 }
 
+//Fetch the next byte in memory
+//Used in 2-byte instructions
 unsigned char inline fetchbyte()
 {
     PC++;
     return RAM[PC++];
 }
 
-void CPU::pushw(unsigned short word)
+//Set N and Z flags based on register, REG
+void inline NZ_FLAGS(unsigned char REG)
 {
-    RAM[S+0x100] = (unsigned char) (word >> 8);
-    S--;
-    RAM[S+0x100] = (unsigned char) (word & 0xFF);
-    S--;
+    if (REG & 128) P |= 128;   else P &= 127;
+    if (!REG) P |= 2;          else P &= 0xFD;
 }
 
-unsigned short CPU::popw()
+//Initialize the CPU
+void CPU::StartCPU()
 {
-    S++;
-    unsigned char lo = RAM[S+0x100];
-    S++;
-    unsigned char hi = RAM[S+0x100];
-    return ((hi << 8) | lo);
+    PC = RAM[0xFFFC+1]<<8|RAM[0xFFFC]; //The "RESET" address
+    S = 0xFF;
+    P = 32;
+    this->inNMI = 0;
 }
 
-void CPU::pushb(unsigned char byte)
-{
-    RAM[S+0x100] = byte;
-    S--;
-}
-
-unsigned char CPU::popb()
-{
-    S++;
-    return RAM[S+0x100];
-}
-
+//Run the CPU for 'cycles' cycles.
+//This function will call upon the PPU to run after every instruction.
+//It also checks to see if a breakpoint has been reached, which is
+//used for debugging.
+//If logging is enabled, this will send data to the logging functions
 void CPU::RunCPU(int cycles)
 { 
     char change;
@@ -119,6 +104,7 @@ start:
     instrCycles = OPcycles[OP];
     cycles -= instrCycles;
 
+    //Check to see if a breakpoint has been hit
     if(Debug::checkBreakAddr(PC))
     {
         PauseNES();
@@ -126,11 +112,16 @@ start:
         cycles = -1;
     }
 
+    //Logging
     if(Project8::logging)
         UpdateLog();
 
+    //Instructions per second
     Debug::updateIPS();
 
+    //This giant switch statement gets compiled into an optimized jumplist.
+    //Thus, I feel the use of 'goto' is justified.
+    //See: http://fms.komkon.org/EMUL8/HOWTO.html
     switch(OP)
     {
         case LDA_Z:
@@ -244,7 +235,7 @@ start:
             goto asl;
 
         case JSR:
-            pushw(PC+2);    //PC+3 for addr read/instruction. -1 for addr storage method
+            pushw(PC+2); //PC+3 for addr read/instruction. -1 for addr storage method
             PC = fetchword();
             goto end;
 

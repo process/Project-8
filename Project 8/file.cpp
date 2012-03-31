@@ -23,7 +23,7 @@ void OpenFile(char * filepath)
     if(GetRomInfo(file))
         return;
 
-    InitMemory(ROMINFO::prg);
+    InitMemory();
 
     char * data = (char*)malloc(0x4000);
     

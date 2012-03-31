@@ -9,6 +9,7 @@
 #include "CPU.h"
 #include "graphics.h"
 #include "debug.h"
+#include "Mem.h"
 
 unsigned short PPUaddr, PPULogicalAddr, PPUTempAddr;
 unsigned char toggle, SPRaddr;
@@ -118,26 +119,29 @@ void PPUaddress()
     }
 }
 
+//Performs Sprite DMA copy
 void PPUsprDMA()
 {
+    unsigned char * DMAbuf;
+    DMAbuf = RAM + (RAM[0x4014] * 0x100); //Memory address to copy from
+
     for(int i = 0; i < 256; i++)
-    {
-        unsigned char * DMAbuf = RAM + (RAM[0x4014] * 0x100);
-        SPRRAM[SPRaddr] = DMAbuf[i];
-        SPRaddr++;
-    }
+        SPRRAM[SPRaddr++] = DMAbuf[i];
 } 
 
+//Load the address for the sprite memory
 void PPUspraddr()
 {
     SPRaddr = RAM[0x2003];
 }
 
+//Read from the sprite memory
 void PPUsprread()
 {
     RAM[0x2004] = SPRRAM[SPRaddr];
 }
 
+//Write to sprite memory and increment address
 void PPUsprwrite()
 {
     SPRRAM[SPRaddr] = RAM[0x2004];
@@ -185,7 +189,7 @@ void PPUwrite()
     CheckPPUaddr();
 }
 
-void PPU2000write()
+void PU2000write()
 {
     PPUTempAddr &= 0xF3FF;
     PPUTempAddr |= (RAM[0x2000] & 3) << 10;
@@ -614,8 +618,8 @@ void ContinueDraw(unsigned int pixels)
             extern unsigned short PC;
             extern unsigned char P;
             P |= 32;
-            cpu->pushw(PC);
-            cpu->pushb(P);
+            pushw(PC);
+            pushb(P);
             P |= 2;
             PC = RAM[0xFFFA + 1]<<8 | RAM[0xFFFA];    //Jumps the CPU into the NMI routine similar to a JSR
             cpu->inNMI = 1;
